@@ -1,0 +1,87 @@
+version: '3'
+
+services:
+  swag:
+    container_name: swag
+    image: linuxserver/swag:latest
+    restart: always
+    ports:
+      - "8001:80"
+      - "44301:443"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Phoenix
+      - URL=remotely.fans
+      - SUBDOMAINS=*.remotely.fans
+      - EMAIL=james.emling@gmail.com
+      - VALIDATE_URLS=false
+    volumes:
+      - /swag/config:/config
+
+  plex:
+    container_name: plex
+    image: linuxserver/plex:latest
+    restart: always
+    network_mode: "service:swag"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Phoenix
+    volumes:
+      - /media/data:/data
+      - /plex/config:/config
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:latest
+    restart: always
+    network_mode: "service:swag"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Phoenix
+    volumes:
+      - /sonarr/config:/config
+      - /media/tv:/tv
+      - /downloads:/downloads
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:latest
+    restart: always
+    network_mode: "service:swag"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Phoenix
+    volumes:
+      - /radarr/config:/config
+      - /media/movies:/movies
+      - /downloads:/downloads
+
+  jackett:
+    container_name: jackett
+    image: linuxserver/jackett:latest
+    restart: always
+    network_mode: "service:swag"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Phoenix
+    volumes:
+      - /jackett/config:/config
+      - /downloads:/downloads
+
+  sabnzbd:
+    container_name: sabnzbd
+    image: linuxserver/sabnzbd:latest
+    restart: always
+    network_mode: "service:swag"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Phoenix
+    volumes:
+      - /sabnzbd/config:/config
+      - /downloads:/downloads
